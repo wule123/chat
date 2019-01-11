@@ -1,0 +1,11 @@
+#服务端口号&项目名称
+server:
+  port: 8088
+  servlet:
+    context-path: /chat
+spring:
+  mvc:
+    view:
+      prefix: /
+      suffix: .html
+#
