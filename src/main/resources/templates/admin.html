@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>客服</title>
+    <link rel = "stylesheet"  type = "text/css"  href = "css/admin.css"  />
+    <script type="application/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="http://cdn.bootcss.com/sockjs-client/1.1.1/sockjs.js"></script>
+    <script type="text/javascript">
+
+        window.onload = function(){
+
+            function sendMsg(msg) {
+
+            }
+            var Words = document.getElementById("words");
+            var Who = document.getElementById("who");
+            var TalkWords = document.getElementById("talkwords");
+            var TalkSub = document.getElementById("talksub");
+
+            TalkSub.onclick = function(){
+                //定义空字符串
+                var str = "";
+                if(TalkWords.value == ""){
+                    // 消息为空时弹窗
+                    alert("消息不能为空");
+                    return;
+                }
+                if(Who.value == 0){
+
+                    if (websocket.readyState == websocket.OPEN) {
+                        var msg = TalkWords.value;//document.getElementById("inputMsg").value;
+                        // websocket.send(msg);//调用后台handleTextMessage方法
+                        // sendMsg(msg);
+                        $.ajax({
+                            type: "GET",
+                            url: "127.0.0.1:8088/chat/sendMsg?userName=wen&&msg="+msg,
+                            contentType: "application/json;charset=utf-8",
+                            dataType: "json",
+                            success: function(result){
+                            },
+                            error:function(msg){
+                            }
+                        })
+                        return;
+                        // alert("发送成功!");
+                    } else {
+                        alert("连接失败!");
+                    }
+
+                    //如果Who.value为0n那么是 A说
+                    str = '<div class="atalk"><span>wen说 :' + TalkWords.value +'</span></div>';
+                }
+                else{
+                    str = '<div class="btalk"><span>le说 :' + TalkWords.value +'</span></div>' ;
+                }
+                Words.innerHTML = Words.innerHTML + str;
+            }
+        }
+
+
+        function getQueryVariable(variable){
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split("=");
+                if(pair[0] == variable){return pair[1];}
+            }
+            return(false);
+        }
+        var username = getQueryVariable("username");
+        var pathName = window.location.pathname.substring(1);
+        var webName = pathName == '' ? '' : pathName.substring(0, pathName.indexOf('/'));
+        var path = window.location.protocol + '//' + window.location.host + '/' + webName + '/';
+        var websocket = null;
+        if ('WebSocket' in window) {
+            websocket = new WebSocket("ws://10.10.20.95:8088/chat/websocket/socketServer.json?username=wen");
+        }
+        else if ('MozWebSocket' in window) {
+            websocket = new MozWebSocket("ws://10.10.20.95:8088/chat/websocket/socketServer.json");
+        }
+        else {
+            websocket = new SockJS("http://10.10.20.95:8088/chat/sockjs/socketServer.json");
+        }
+        websocket.onopen = onOpen;
+        websocket.onmessage = onMessage;
+        websocket.onerror = onError;
+        websocket.onclose = onClose;
+
+        function onOpen(openEvt) {
+            //alert(openEvt.Data);
+        }
+
+        function onMessage(evt) {
+            var parse = JSON.parse(evt.data);
+            var sender = parse.sender;
+            if(sender=="le"){
+                var str = '<div class="atalk"><span>le说 :' + parse.value +'</span></div>';
+                Words.innerHTML = Words.innerHTML + str;
+            }
+        }
+        function onError() {}
+        function onClose() {}
+
+        // function doSend() {
+        //     if (websocket.readyState == websocket.OPEN) {
+        //         var msg = document.getElementById("inputMsg").value;
+        //         websocket.send(msg);//调用后台handleTextMessage方法
+        //         // alert("发送成功!");
+        //     } else {
+        //         alert("连接失败!");
+        //     }
+        // }
+        window.close=function()
+        {
+            websocket.onclose();
+        }
+
+
+
+    </script>
+</head>
+<body>
+<div class="talk_con">
+    <div class="talk_show" id="words">
+        <div class="atalk"><span id="asay">wen说：吃饭了吗？</span></div>
+        <div class="btalk"><span id="bsay">le说：还没呢，你呢？</span></div>
+    </div>
+    <div class="talk_input">
+        <select hidden class="whotalk" id="who">
+            <option value="0">wen说：</option>
+            <!--<option value="1">B说：</option>-->
+        </select>
+        <input type="text" class="talk_word" id="talkwords">
+        <input type="button" value="发送" class="talk_sub" id="talksub">
+    </div>
+</div>
+</body>
+</html>
