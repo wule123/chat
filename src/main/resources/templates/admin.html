@@ -6,15 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>客服</title>
     <link rel = "stylesheet"  type = "text/css"  href = "css/admin.css"  />
-    <script type="application/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="application/javascript" src="js/jquery-1.10.1.min.js"></script>
     <script type="text/javascript" src="http://cdn.bootcss.com/sockjs-client/1.1.1/sockjs.js"></script>
     <script type="text/javascript">
 
         window.onload = function(){
-
-            function sendMsg(msg) {
-
-            }
             var Words = document.getElementById("words");
             var Who = document.getElementById("who");
             var TalkWords = document.getElementById("talkwords");
@@ -23,7 +19,7 @@
             TalkSub.onclick = function(){
                 //定义空字符串
                 var str = "";
-                if(TalkWords.value == ""){
+                if($("#talkwords").val() == ""){
                     // 消息为空时弹窗
                     alert("消息不能为空");
                     return;
@@ -33,33 +29,35 @@
                     if (websocket.readyState == websocket.OPEN) {
                         var msg = TalkWords.value;//document.getElementById("inputMsg").value;
                         // websocket.send(msg);//调用后台handleTextMessage方法
-                        // sendMsg(msg);
-                        $.ajax({
-                            type: "GET",
-                            url: "127.0.0.1:8088/chat/sendMsg?userName=wen&&msg="+msg,
-                            contentType: "application/json;charset=utf-8",
-                            dataType: "json",
-                            success: function(result){
-                            },
-                            error:function(msg){
-                            }
-                        })
-                        return;
+                        sendMsg(msg);
                         // alert("发送成功!");
                     } else {
                         alert("连接失败!");
                     }
 
                     //如果Who.value为0n那么是 A说
-                    str = '<div class="atalk"><span>wen说 :' + TalkWords.value +'</span></div>';
+                    str = '<div class="sender"><span>wen说 :' + TalkWords.value +'</span></div>';
                 }
                 else{
-                    str = '<div class="btalk"><span>le说 :' + TalkWords.value +'</span></div>' ;
+                    str = '<div class="receiver"><span>le说 :' + TalkWords.value +'</span></div>' ;
                 }
                 Words.innerHTML = Words.innerHTML + str;
+                $("#talkwords").val("");
             }
         }
 
+        function sendMsg(msg) {
+            $.ajax({
+                type: "GET",
+                url: "sendMsg?userName=wen&&msg="+msg,
+                contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function(result){
+                },
+                error:function(msg){
+                }
+            })
+        }
 
         function getQueryVariable(variable){
             var query = window.location.search.substring(1);
@@ -97,8 +95,8 @@
             var parse = JSON.parse(evt.data);
             var sender = parse.sender;
             if(sender=="le"){
-                var str = '<div class="atalk"><span>le说 :' + parse.value +'</span></div>';
-                Words.innerHTML = Words.innerHTML + str;
+                var str = '<div class="receiver"><span>le说 :' + parse.message +'</span></div>';
+                $("#words").append(str);
             }
         }
         function onError() {}
@@ -125,8 +123,8 @@
 <body>
 <div class="talk_con">
     <div class="talk_show" id="words">
-        <div class="atalk"><span id="asay">wen说：吃饭了吗？</span></div>
-        <div class="btalk"><span id="bsay">le说：还没呢，你呢？</span></div>
+        <div class="sender"><span id="asay">wen说：吃饭了吗？</span></div>
+        <div class="receiver"><span id="bsay">le说：还没呢，你呢？</span></div>
     </div>
     <div class="talk_input">
         <select hidden class="whotalk" id="who">

@@ -1,15 +1,13 @@
 package com.wl.chat.websocket;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * WebSocket拦截

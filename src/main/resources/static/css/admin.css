@@ -59,3 +59,27 @@
     color:#fff;
     padding:5px 10px;
 }
+
+.sender{
+    margin:10px;
+    text-align:right;
+}
+
+.sender span{
+    display:inline-block;
+    background:#0181cc;
+    border-radius:10px;
+    color:#fff;
+    padding:5px 10px;
+}
+
+.receiver{
+    margin:10px;
+}
+.receiver span{
+    display:inline-block;
+    background:#ef8201;
+    border-radius:10px;
+    color:#fff;
+    padding:5px 10px;
+}

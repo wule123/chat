@@ -1,16 +1,15 @@
 package com.wl.chat.websocket;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.wl.chat.message.MessageUtils;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class SpringWebSocketHandler extends TextWebSocketHandler {
-    private static final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();//这个会出现�?�能问题，最好用Map来存储，key用userid
+    private static final ArrayList<WebSocketSession> users = new ArrayList<WebSocketSession>();//这个会出现能问题，最好用Map来存储，key用userid
 
     public SpringWebSocketHandler() {
         // TODO Auto-generated constructor stub
